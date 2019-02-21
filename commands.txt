@@ -1,0 +1,21 @@
+#Create a Kafka Topic
+$ kafka-topics --create --zookeeper localhost:2181 --partitions 1  --replication-factor 1 --topic serverlog
+
+#Create the folder structure of sbt
+$ mkdir sampleproject
+$ cd sampleproject
+$ gedit build.sbt
+$ mkdir -p src/main/scala
+$ gedit src/main/scala/sampleproject.scala
+
+#Create an Sbt package
+$ sbt package
+
+#Run spark job
+spark-submit --class "sampleproject" --master local[2] target/scala-2.10/spark-kafka-project_2.10-1.0.jar
+
+#Open another terminal and load the data into Kafka producer
+kafka-console-producer --broker-list localhost:9092 --topic serverlog < apache-access-log.txt 
+
+#You can see that data is stored in resultdata1 folder of hdfs.
+hdfs dfs -ls /
